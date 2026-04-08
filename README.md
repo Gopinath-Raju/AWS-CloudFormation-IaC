@@ -53,16 +53,16 @@ Instead of creating resources one by one in the AWS Console, a single CloudForma
 ## 📸 Screenshots
 
 ### 1. Stack Created — CREATE_COMPLETE
-![Stack Complete](./screenshots/Stack-created-and-complete-3.jpg)
+![Stack Complete](./screenshots/Stack-created-and-complete.jpg)
 
 ### 2. Resources — All 5 Created Successfully
-![Resources](./screenshots/Resources-2.jpg)
+![Resources](./screenshots/Resources.jpg)
 
 ### 3. Outputs — EC2 IP, S3 Bucket, IAM Role
 ![Outputs](./screenshots/Outputs.jpg)
 
 ### 4. Template — YAML Code in AWS
-![Template](./screenshots/Template-4.jpg)
+![Template](./screenshots/Template.jpg)
 
 ---
 
