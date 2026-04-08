@@ -53,7 +53,7 @@ Instead of creating resources one by one in the AWS Console, a single CloudForma
 ## 📸 Screenshots
 
 ### 1. Stack Created — CREATE_COMPLETE
-![Stack Complete](./screenshots/Stack-created-and-complete.jpg)
+![Stack Complete](./screenshots/Stackcreatedandcomplete.jpg)
 
 ### 2. Resources — All 5 Created Successfully
 ![Resources](./screenshots/Resources.jpg)
