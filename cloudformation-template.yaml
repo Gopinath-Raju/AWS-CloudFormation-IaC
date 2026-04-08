@@ -1,0 +1,110 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Project 4 - CloudFormation Stack by Gopinath Raju
+  Automatically provisions EC2 instance, S3 bucket, and IAM Role
+  Region: us-east-1 (N. Virginia)
+
+Parameters:
+  KeyPairName:
+    Description: Name of your existing EC2 Key Pair
+    Type: AWS::EC2::KeyPair::KeyName
+
+  EnvironmentName:
+    Description: Environment tag name
+    Type: String
+    Default: dev
+
+Resources:
+
+  # ─────────────────────────────────────────
+  # S3 BUCKET
+  # ─────────────────────────────────────────
+  GopinathS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "gopinath-cfn-bucket-${AWS::AccountId}"
+      Tags:
+        - Key: Name
+          Value: Gopinath-CFN-Bucket
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # ─────────────────────────────────────────
+  # IAM ROLE — EC2 can access S3
+  # ─────────────────────────────────────────
+  EC2S3AccessRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: EC2-S3-Access-Role-CFN
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+      Tags:
+        - Key: Name
+          Value: EC2-S3-Access-Role-CFN
+
+  EC2InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref EC2S3AccessRole
+
+  # ─────────────────────────────────────────
+  # SECURITY GROUP
+  # ─────────────────────────────────────────
+  WebServerSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow SSH access
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: Gopinath-CFN-SG
+
+  # ─────────────────────────────────────────
+  # EC2 INSTANCE
+  # ─────────────────────────────────────────
+  GopinathEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-0c02fb55956c7d316   # Amazon Linux 2 - us-east-1
+      KeyName: !Ref KeyPairName
+      IamInstanceProfile: !Ref EC2InstanceProfile
+      SecurityGroups:
+        - !Ref WebServerSG
+      Tags:
+        - Key: Name
+          Value: Gopinath-CFN-EC2
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+# ─────────────────────────────────────────
+# OUTPUTS — shown after stack is created
+# ─────────────────────────────────────────
+Outputs:
+  EC2InstanceId:
+    Description: EC2 Instance ID
+    Value: !Ref GopinathEC2Instance
+
+  EC2PublicIP:
+    Description: Public IP of EC2
+    Value: !GetAtt GopinathEC2Instance.PublicIp
+
+  S3BucketName:
+    Description: S3 Bucket Name
+    Value: !Ref GopinathS3Bucket
+
+  IAMRoleName:
+    Description: IAM Role Name
+    Value: !Ref EC2S3AccessRole
